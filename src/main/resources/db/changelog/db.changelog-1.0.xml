@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="strahinja_misic"
+               id="version-1.0"
+               logicalFilePath="src/main/resources/db/changelog/db.changelog-1.0.xml">
+        <validCheckSum>ANY</validCheckSum>
+
+        <createTable tableName="match">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="duration" type="INTEGER"/>
+            <column name="is_ingested" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIMEZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIMEZONE"/>
+        </createTable>
+
+        <createTable tableName="payload">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="match_id" type="BIGINT">
+                <constraints nullable="false" unique="true" foreignKeyName="fk_payload_match" referencedTableName="match" referencedColumnNames="id"/>
+            </column>
+            <column name="text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="hero">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="match_hero">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="match_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_match_hero_match" referencedTableName="match" referencedColumnNames="id"/>
+            </column>
+            <column name="hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_match_hero_hero" referencedTableName="hero" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="spell">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="item">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="hit_event">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="match_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_hit_event_match_hero" referencedTableName="match_hero" referencedColumnNames="id"/>
+            </column>
+            <column name="item_id" type="BIGINT">
+                <constraints foreignKeyName="fk_hit_event_item" referencedTableName="item" referencedColumnNames="id"/>
+            </column>
+            <column name="spell_id" type="BIGINT">
+                <constraints foreignKeyName="fk_hit_event_spell" referencedTableName="spell" referencedColumnNames="id"/>
+            </column>
+            <column name="target_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_hit_event_target_hero" referencedTableName="hero" referencedColumnNames="id"/>
+            </column>
+            <column name="damage" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="kill_event">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="match_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_kill_event_match_hero" referencedTableName="match_hero" referencedColumnNames="id"/>
+            </column>
+            <column name="target_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_kill_event_target_hero" referencedTableName="hero" referencedColumnNames="id"/>
+            </column>
+            <column name="timestamp" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="death_event">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="match_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_death_event_match_hero" referencedTableName="match_hero" referencedColumnNames="id"/>
+            </column>
+            <column name="attacker_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_death_event_attacker_hero" referencedTableName="hero" referencedColumnNames="id"/>
+            </column>
+            <column name="timestamp" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="cast_event">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="match_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_cast_event_match_hero" referencedTableName="match_hero" referencedColumnNames="id"/>
+            </column>
+            <column name="spell_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_cast_event_spell" referencedTableName="spell" referencedColumnNames="id"/>
+            </column>
+            <column name="target_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_cast_event_target_hero" referencedTableName="hero" referencedColumnNames="id"/>
+            </column>
+            <column name="level" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="buy_event">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="match_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_buy_event_match_hero" referencedTableName="match_hero" referencedColumnNames="id"/>
+            </column>
+            <column name="item_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_buy_event_item" referencedTableName="item" referencedColumnNames="id"/>
+            </column>
+            <column name="timestamp" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="use_event">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="match_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_use_event_match_hero" referencedTableName="match_hero" referencedColumnNames="id"/>
+            </column>
+            <column name="item_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_use_event_item" referencedTableName="item" referencedColumnNames="id"/>
+            </column>
+            <column name="timestamp" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="heal_event">
+            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1" startWith="1">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="match_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_heal_event_match_hero" referencedTableName="match_hero" referencedColumnNames="id"/>
+            </column>
+            <column name="item_id" type="BIGINT">
+                <constraints foreignKeyName="fk_heal_event_item" referencedTableName="item" referencedColumnNames="id"/>
+            </column>
+            <column name="spell_id" type="BIGINT">
+                <constraints foreignKeyName="fk_heal_event_spell" referencedTableName="spell" referencedColumnNames="id"/>
+            </column>
+            <column name="target_hero_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_heal_event_target_hero" referencedTableName="hero" referencedColumnNames="id"/>
+            </column>
+            <column name="amount" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="match_hero" columnNames="match_id, hero_id"/>
+
+        <createIndex indexName="idx_match_hero_hit_event" tableName="hit_event">
+            <column name="match_hero_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_match_hero_kill_event" tableName="kill_event">
+            <column name="match_hero_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_match_hero_death_event" tableName="death_event">
+            <column name="match_hero_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_match_hero_cast_event" tableName="cast_event">
+            <column name="match_hero_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_match_hero_buy_event" tableName="buy_event">
+            <column name="match_hero_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_match_hero_use_event" tableName="use_event">
+            <column name="match_hero_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_match_hero_heal_event" tableName="heal_event">
+            <column name="match_hero_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

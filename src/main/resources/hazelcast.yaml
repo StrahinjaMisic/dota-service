@@ -1,0 +1,6 @@
+# Multicast used as discovery mechanism with default network configuration values
+hazelcast:
+  network:
+    join:
+      multicast:
+        enabled: true
