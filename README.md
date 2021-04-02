@@ -1,2 +1,2 @@
 # dota-service
-Spring Boot service for ingesting Dota 2 combatlog files and producing game stats
+Spring Boot project for ingesting Dota 2 combatlog files and producing match stats.
