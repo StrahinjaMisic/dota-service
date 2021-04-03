@@ -5,6 +5,7 @@ import com.example.entity.Match;
 import com.example.model.HeroStatsModel;
 import com.example.model.MatchStatsModel;
 import com.example.model.SimpleMatchModel;
+import com.example.parser.EventParserService;
 import com.example.repository.MatchRepository;
 import com.example.service.impl.MatchServiceImpl;
 import org.junit.Assert;
@@ -35,6 +36,9 @@ public class MatchServiceImplTest {
     @Mock
     private MatchRepository matchRepository;
 
+    @Mock
+    private EventParserService eventParserService;
+
     @InjectMocks
     private MatchServiceImpl matchService;
 
@@ -47,6 +51,8 @@ public class MatchServiceImplTest {
         Assert.assertNotNull(simpleMatchModel);
         Assert.assertEquals(MATCH_ID, simpleMatchModel.getId());
         Assert.assertTrue(!simpleMatchModel.getIsIngested());
+        verify(matchRepository, times(1)).save(any(Match.class));
+        verify(eventParserService, times(1)).parsePayload(any(Match.class));
     }
 
     @Test
@@ -55,13 +61,7 @@ public class MatchServiceImplTest {
         when(matchRepository.existsById(anyLong())).thenReturn(true);
         Assert.assertThrows(EntityExistsException.class, () -> matchService.ingestMatch(payload));
         verify(matchRepository, never()).save(any(Match.class));
-    }
-
-    @Test
-    public void testGetAllPendingIngestion() throws IOException {
-        when(matchRepository.getByIsIngested(anyBoolean())).thenReturn(List.of(DotaTestFactory.createMatchWithPayload()));
-        List<Match> results = matchService.getAllMatchesPendingIngestion();
-        Assert.assertEquals(1, results.size());
+        verify(eventParserService, never()).parsePayload(any(Match.class));
     }
 
     @Test

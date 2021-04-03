@@ -18,7 +18,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static com.example.DotaTestFactory.MATCH_ID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -49,9 +48,8 @@ public class IT {
         MockHttpServletResponse response = ingestPayload(payload);
         JsonNode match = OBJECT_MAPPER.readTree(response.getContentAsString());
         String id = match.get("id").asText();
-        Assert.assertEquals(MATCH_ID.toString(), id);
-        Assert.assertTrue(!match.get("isIngested").asBoolean());
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatus());
+        Assert.assertEquals(DotaTestFactory.getMatchesResponse(), response.getContentAsString());
 
         // Try ingesting the same payload
         response = ingestPayload(payload);
@@ -60,8 +58,6 @@ public class IT {
         // Get non existing match
         response = getMatchStats("1");
         Assert.assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
-
-        waitUntilPayloadIsIngested(id);
 
         // Get matches
         response = getMatches();
@@ -73,20 +69,6 @@ public class IT {
         response = getMatchStats(id);
         Assert.assertEquals(HttpStatus.OK.value(), response.getStatus());
         Assert.assertEquals(DotaTestFactory.getMatchStatsResponse(), response.getContentAsString());
-    }
-
-    private void waitUntilPayloadIsIngested(String id) throws Exception {
-        long start = System.currentTimeMillis();
-        while (!isIngested(id)) {
-            if (60000 < System.currentTimeMillis() - start) {
-                throw new Exception("Payload not ingested within 60 sec");
-            }
-        }
-    }
-
-    private boolean isIngested(String id) throws Exception {
-        JsonNode matchStats = OBJECT_MAPPER.readTree(getMatchStats(id).getContentAsString());
-        return matchStats.get("isIngested").asBoolean();
     }
 
     private MockHttpServletResponse ingestPayload(String payload) throws Exception {

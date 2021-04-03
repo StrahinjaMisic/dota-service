@@ -1,7 +1,6 @@
 package com.example.parser;
 
 import com.example.entity.Match;
-import com.example.repository.MatchRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -16,10 +15,7 @@ public class EventParserService {
 
     private final Map<String, EventParser> eventParsers = new HashMap<>();
 
-    private final MatchRepository matchRepository;
-
     public EventParserService(
-            MatchRepository matchRepository,
             CastEventParser castEventParser,
             BuyEventParser buyEventParser,
             UseEventParser useEventParser,
@@ -28,7 +24,6 @@ public class EventParserService {
             KillEventParser killEventParser,
             GameStateEventParser gameStateEventParser
     ) {
-        this.matchRepository = matchRepository;
         eventParsers.put("casts", castEventParser);
         eventParsers.put("buys", buyEventParser);
         eventParsers.put("uses", useEventParser);
@@ -47,6 +42,5 @@ public class EventParserService {
             }
         }
         match.setIsIngested(Boolean.TRUE);
-        matchRepository.save(match);
     }
 }

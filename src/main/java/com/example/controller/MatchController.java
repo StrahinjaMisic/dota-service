@@ -33,7 +33,7 @@ public class MatchController {
         return ResponseEntity.ok(matchService.ingestMatch(payload));
     }
 
-    @ApiOperation("Gets matches")
+    @ApiOperation("Gets a list of matches")
     @GetMapping
     public ResponseEntity<Page<SimpleMatchModel>> getMatches(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(matchService.getMatches(pageable));

@@ -2,7 +2,6 @@ package com.example.parser;
 
 import com.example.DotaTestFactory;
 import com.example.entity.Match;
-import com.example.repository.MatchRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,9 +40,6 @@ public class EventParserServiceTest {
     @Mock
     private GameStateEventParser gameStateEventParser;
 
-    @Mock
-    private MatchRepository matchRepository;
-
     @InjectMocks
     private EventParserService eventParserService;
 
@@ -59,6 +55,5 @@ public class EventParserServiceTest {
         verify(killEventParser, times(507)).parseEvent(anyString(), any(Match.class));
         verify(useEventParser, times(607)).parseEvent(anyString(), any(Match.class));
         verify(gameStateEventParser, times(8)).parseEvent(anyString(), any(Match.class));
-        verify(matchRepository, times(1)).save(any(Match.class));
     }
 }

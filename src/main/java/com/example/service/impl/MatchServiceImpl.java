@@ -2,6 +2,7 @@ package com.example.service.impl;
 
 import com.example.entity.*;
 import com.example.model.*;
+import com.example.parser.EventParserService;
 import com.example.repository.MatchRepository;
 import com.example.service.MatchService;
 import org.springframework.data.domain.Page;
@@ -18,8 +19,14 @@ public class MatchServiceImpl implements MatchService {
 
     private final MatchRepository matchRepository;
 
-    public MatchServiceImpl(MatchRepository matchRepository) {
+    private final EventParserService parserService;
+
+    public MatchServiceImpl(
+            MatchRepository matchRepository,
+            EventParserService parserService
+    ) {
         this.matchRepository = matchRepository;
+        this.parserService = parserService;
     }
 
     @Override
@@ -28,13 +35,10 @@ public class MatchServiceImpl implements MatchService {
         if (matchRepository.existsById(id)) {
             throw new EntityExistsException(String.format("Match log already ingested under id %s", id));
         }
-        Match match = matchRepository.save(new Match(id, payload));
+        Match match = new Match(id, payload);
+        parserService.parsePayload(match);
+        match = matchRepository.save(match);
         return toSimpleMatchModel(match);
-    }
-
-    @Override
-    public List<Match> getAllMatchesPendingIngestion() {
-        return matchRepository.getByIsIngested(Boolean.FALSE);
     }
 
     @Override
