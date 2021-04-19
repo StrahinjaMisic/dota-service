@@ -3,7 +3,7 @@ Spring Boot project for ingesting Dota 2 combatlog files and producing match sta
 
 ## Specs:
 - Spring Boot 2.4
-- Java 11
+- Java 15
 - Maven for dependency management and project build
 - PostgreSQL 10 as database
 - Liquibase for database schema change management

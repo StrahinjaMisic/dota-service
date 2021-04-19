@@ -16,7 +16,7 @@
     <description>Dota 2 Stats Project</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>15</java.version>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <testcontainers.version>1.15.2</testcontainers.version>
     </properties>
